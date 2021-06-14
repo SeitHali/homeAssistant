@@ -10,7 +10,77 @@ recorder:
 tts:
   - platform: google_translate
 
+mqtt:
+  discovery: true
+  broker: 192.168.0.100
+  birth_message:
+    topic: 'homeassistant/status'
+    payload: 'online'
+  will_message:
+    topic: 'homeassistant/status'
+    payload: 'offline'
+  username: "mqtt"
+  password: "uvsmsyitv57yigno"
+
+fan:
+  - platform: xiaomi_miio_fan
+    name: Xiaomi Smart Fan
+    host: 192.168.0.15
+    token: 3f0bf5c2de401163beaf1fb0ba85fd5f
+    model: zhimi.fan.sa1
+
+light:
+  - platform: group
+    name: Кабинет_свет
+    entities:
+      - light.50ec50db4524_light
+      - light.50ec50d82d7d_light
+      - light.50ec50dbad14_light
+      - light.50ec50dc9d5e_light
+      - light.50ec50d7d6d7_light
+      - light.50ec50dc8c17_light
+      - light.50ec50dd3adf_light
+      - light.50ec50dc9d46_light
+  - platform: group
+    name: Кабинет_свет_проход
+    entities:
+      - light.50ec50db4524_light
+      - light.50ec50dc9d46_light
+
+tuya:
+  username: !secret tuya_username
+  password: !secret tuya_password 
+  country_code: 1 
+  platform: smart_life
+
+sensor:
+  - platform: rest
+    name: cabinet_blind_status
+    resource: http://blynk-cloud.com/umzt1VaG4dbLsh4kIFpbpWAHH6ZY7-y7/get/V1
+    value_template: "{{ value_json[0] }}"
+    scan_interval: 1
+
+# Управление жалюзи в кабинете
+switch:
+  - platform: template
+    switches:
+      cabinet_blinds:
+        value_template: "{{ is_state('sensor.cabinet_blind_status', '180') }}"
+        turn_on:
+          service: script.close_blinds
+        turn_off:
+          service: script.open_blinds
+
+shell_command:
+  close_blinds: /usr/bin/curl -X GET http://blynk-cloud.com/umzt1VaG4dbLsh4kIFpbpWAHH6ZY7-y7/update/V1?value=180
+  open_blinds: /usr/bin/curl -X GET http://blynk-cloud.com/umzt1VaG4dbLsh4kIFpbpWAHH6ZY7-y7/update/V1?value=0
+
+
+
 group: !include groups.yaml
 automation: !include automations.yaml
 script: !include scripts.yaml
 scene: !include scenes.yaml
+
+homeassistant:
+  customize: !include customize.yaml

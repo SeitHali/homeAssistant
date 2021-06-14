@@ -1,0 +1,38 @@
+turn_off_all_lights:
+  alias: Turn_off_all_lights
+  sequence:
+  - condition: state
+    entity_id: switch.lumi_lumi_ctrl_neutral2_1c472604_on_off
+    state: 'on'
+  - service: switch.turn_off
+    target:
+      entity_id: switch.lumi_lumi_ctrl_neutral2_1c472604_on_off
+  mode: single
+disable_monitor:
+  sequence:
+  - service: mqtt.publish
+    data_template:
+      topic: pc_control/monitor
+      payload: 'ON'
+close_blinds:
+  sequence:
+  - service: shell_command.close_blinds
+open_blinds:
+  sequence:
+  - service: shell_command.open_blinds
+test:
+  alias: lock_door
+  sequence:
+  - service: mqtt.publish
+    data:
+      topic: smartlock/set
+      payload: lock
+  mode: single
+unlock_door:
+  sequence:
+  - service: mqtt.publish
+    data:
+      topic: smartlock/set
+      payload: unlock
+  mode: single
+  alias: unlock_door
