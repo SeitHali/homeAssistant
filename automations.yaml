@@ -1,14 +1,13 @@
 - id: Cabinet_button_blinds_automations
-  alias: Cabinet_button_blinds_automantions
+  alias: Cabinet_button_open_blinds
   description: Открывает и закрывает жалюзи по однократному нажатию кнопки у окна
     в кабинете
   trigger:
-  - platform: device
-    domain: mqtt
-    device_id: a98b5a68be4d5bf1f6423c07a4df352e
-    type: click
-    subtype: single
-    discovery_id: 0x00158d0006baa466 click_single
+  - device_id: 1181c53311a36e94d2941943b58af1c1
+    domain: zha
+    platform: device
+    type: remote_button_short_press
+    subtype: remote_button_short_press
   condition: []
   action:
   - service: switch.toggle
@@ -16,15 +15,14 @@
       entity_id: switch.cabinet_blinds
   mode: single
 - id: Cabinet_button_windows_automations
-  alias: Cabinet_button_windows_automations
+  alias: Cabinet_button_open_windows
   description: Открывает и закрывает окно по двукратному нажатию кнопки у окна в кабинете
   trigger:
-  - platform: device
-    domain: mqtt
-    device_id: a98b5a68be4d5bf1f6423c07a4df352e
-    type: click
-    subtype: double
-    discovery_id: 0x00158d0006baa466 click_double
+  - device_id: 1181c53311a36e94d2941943b58af1c1
+    domain: zha
+    platform: device
+    type: remote_button_double_press
+    subtype: remote_button_double_press
   condition: []
   action:
   - service: switch.toggle
@@ -43,22 +41,23 @@
     data:
       value: '{{ trigger.payload }}'
 - id: Open_cabinet_windows
-  alias: Open_cabinet_windows
+  alias: Сabinet_open_windows
   trigger:
-    platform: state
+  - platform: state
     entity_id: input_number.cabinet_windows_slider
   action:
-    service: mqtt.publish
+  - service: mqtt.publish
     data:
       topic: drivent-876/setTargetPosition
       retain: true
       payload: '{{ states(''input_number.cabinet_windows_slider'') | int }}'
+  mode: single
 - id: '1627512990119'
-  alias: Включение света в кабинете
+  alias: Cabinet_light_group_turn_on
   description: Включение света в кабинете
   trigger:
   - platform: state
-    entity_id: light.13b69c533bc2e000_light
+    entity_id: light.kabinet_svet
     from: 'off'
     to: 'on'
   condition:
@@ -76,6 +75,9 @@
       entity_id:
       - switch.lumi_lumi_ctrl_neutral2_1c472604_on_off
       - switch.lumi_lumi_ctrl_neutral2_1c472604_on_off_2
+  - service: light.turn_on
+    target:
+      entity_id: light.kabinet_svet
   mode: single
 - id: '1627513890830'
   alias: Беспроводной выключатель в кабинете
@@ -108,8 +110,8 @@
       entity_id: switch.0x00158d0004082177_left
   mode: single
 - id: '1627598943799'
-  alias: Выключение света в гардеробе
-  description: Выключение света в гардеробе
+  alias: Wardrobe_open_door
+  description: Выключение света в гардеробе по открытию двери
   trigger:
   - platform: state
     entity_id: binary_sensor.lumi_lumi_sensor_magnet_aq2_05b62004_on_off
@@ -157,31 +159,62 @@
       - switch.lumi_lumi_ctrl_neutral2_1c472604_on_off_2
   mode: single
 - id: '1627691764775'
-  alias: Беспроводной выключатель в кабинете включить свет
-  description: Беспроводной выключатель в кабинете включить свет
+  alias: Cabinet_wireless_switch_short_press
+  description: Беспроводной выключатель в кабинете включить свет - одинарное нажатие
   trigger:
-  - platform: device
-    domain: mqtt
-    device_id: fdc0abe6a4a259eacfb42dff9c96f019
-    type: action
-    subtype: single
-    discovery_id: 0x00158d000283d11f action_single
+  - device_id: 788f25352034020aa94d3df6998f1abd
+    domain: zha
+    platform: device
+    type: remote_button_short_press
+    subtype: remote_button_short_press
+  condition: []
+  action:
+  - service: light.toggle
+    target:
+      entity_id: light.kabinet_svet
+  mode: single
+- id: '1630015332845'
+  alias: Cabinet_light_group_turn_off
+  description: Выключение света в кабинете
+  trigger:
+  - platform: state
+    entity_id: light.kabinet_svet
+    to: 'off'
+    from: 'on'
   condition:
-  - condition: state
-    entity_id: switch.lumi_lumi_ctrl_neutral2_1c472604_on_off
-    state: 'off'
-  - condition: and
+  - condition: or
     conditions:
     - condition: state
+      entity_id: switch.lumi_lumi_ctrl_neutral2_1c472604_on_off
+      state: 'on'
+    - condition: state
       entity_id: switch.lumi_lumi_ctrl_neutral2_1c472604_on_off_2
-      state: 'off'
+      state: 'on'
   action:
-  - service: switch.turn_on
+  - service: switch.turn_off
     target:
       entity_id:
       - switch.lumi_lumi_ctrl_neutral2_1c472604_on_off
       - switch.lumi_lumi_ctrl_neutral2_1c472604_on_off_2
+  - service: light.turn_off
+    target:
+      entity_id: light.kabinet_svet
+  mode: single
+- id: '1630016940697'
+  alias: Cabinet_wireless_switch_long_press
+  description: Выключатель в кабинете  диммер - долгое нажатие
+  trigger:
+  - device_id: 788f25352034020aa94d3df6998f1abd
+    domain: zha
+    platform: device
+    type: remote_button_double_press
+    subtype: remote_button_double_press
+  condition: []
+  action:
   - service: light.turn_on
     target:
-      entity_id: light.13b69c533bc2e000_light
+      entity_id: light.kabinet_svet
+    data:
+      transition: 1
+      brightness_step: 25
   mode: single
