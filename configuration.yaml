@@ -43,17 +43,6 @@ fan:
 
 light:
   - platform: group
-    name: Кабинет_свет
-    entities:
-      - light.50ec50db4524_light
-      - light.50ec50d82d7d_light
-      - light.50ec50dbad14_light
-      - light.50ec50dc9d5e_light
-      - light.50ec50d7d6d7_light
-      - light.50ec50dc8c17_light
-      - light.50ec50dd3adf_light
-      - light.50ec50dc9d46_light
-  - platform: group
     name: Кабинет_свет_проход
     entities:
       - light.50ec50db4524_light
