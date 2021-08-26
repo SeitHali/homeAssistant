@@ -1,16 +1,7 @@
-- id: test
-  alias: TEST
-  description: ''
-  trigger:
-  - entity_id: light.kabinet_svet
-    platform: state
-    to: 'on'
-  action:
-  - entity_id: switch.lumi_lumi_ctrl_neutral2_1c472604_on_off
-    service: switch.turn_on
-- id: '1623456281736'
-  alias: Новая автоматизация
-  description: ''
+- id: Cabinet_button_blinds_automations
+  alias: Cabinet_button_blinds_automantions
+  description: Открывает и закрывает жалюзи по однократному нажатию кнопки у окна
+    в кабинете
   trigger:
   - platform: device
     domain: mqtt
@@ -20,5 +11,177 @@
     discovery_id: 0x00158d0006baa466 click_single
   condition: []
   action:
-  - service: script.open_blinds
+  - service: switch.toggle
+    target:
+      entity_id: switch.cabinet_blinds
+  mode: single
+- id: Cabinet_button_windows_automations
+  alias: Cabinet_button_windows_automations
+  description: Открывает и закрывает окно по двукратному нажатию кнопки у окна в кабинете
+  trigger:
+  - platform: device
+    domain: mqtt
+    device_id: a98b5a68be4d5bf1f6423c07a4df352e
+    type: click
+    subtype: double
+    discovery_id: 0x00158d0006baa466 click_double
+  condition: []
+  action:
+  - service: switch.toggle
+    target:
+      entity_id: switch.cabinet_window_switch
+  mode: single
+- id: Set_cabinet_slider
+  alias: Set_cabinet_slider
+  trigger:
+    platform: mqtt
+    topic: drivent-876/setTargetPosition
+  action:
+    service: input_number.set_value
+    target:
+      entity_id: input_number.target_temp
+    data:
+      value: '{{ trigger.payload }}'
+- id: Open_cabinet_windows
+  alias: Open_cabinet_windows
+  trigger:
+    platform: state
+    entity_id: input_number.cabinet_windows_slider
+  action:
+    service: mqtt.publish
+    data:
+      topic: drivent-876/setTargetPosition
+      retain: true
+      payload: '{{ states(''input_number.cabinet_windows_slider'') | int }}'
+- id: '1627512990119'
+  alias: Включение света в кабинете
+  description: Включение света в кабинете
+  trigger:
+  - platform: state
+    entity_id: light.13b69c533bc2e000_light
+    from: 'off'
+    to: 'on'
+  condition:
+  - condition: state
+    entity_id: switch.lumi_lumi_ctrl_neutral2_1c472604_on_off
+    state: 'off'
+  - condition: or
+    conditions:
+    - condition: state
+      entity_id: switch.lumi_lumi_ctrl_neutral2_1c472604_on_off_2
+      state: 'off'
+  action:
+  - service: switch.turn_on
+    target:
+      entity_id:
+      - switch.lumi_lumi_ctrl_neutral2_1c472604_on_off
+      - switch.lumi_lumi_ctrl_neutral2_1c472604_on_off_2
+  mode: single
+- id: '1627513890830'
+  alias: Беспроводной выключатель в кабинете
+  description: Беспроводной выключатель в кабинете
+  trigger:
+  - platform: device
+    domain: mqtt
+    device_id: fdc0abe6a4a259eacfb42dff9c96f019
+    type: click
+    subtype: single
+    discovery_id: 0x00158d000283d11f click_single
+  condition: []
+  action:
+  - service: light.toggle
+    target:
+      entity_id: light.13b69c533bc2e000_light
+  mode: single
+- id: '1627598890230'
+  alias: Включение света в гардеробе
+  description: Включение света в гардеробе
+  trigger:
+  - platform: state
+    entity_id: binary_sensor.lumi_lumi_sensor_magnet_aq2_05b62004_on_off
+    from: 'off'
+    to: 'on'
+  condition: []
+  action:
+  - service: switch.turn_on
+    target:
+      entity_id: switch.0x00158d0004082177_left
+  mode: single
+- id: '1627598943799'
+  alias: Выключение света в гардеробе
+  description: Выключение света в гардеробе
+  trigger:
+  - platform: state
+    entity_id: binary_sensor.lumi_lumi_sensor_magnet_aq2_05b62004_on_off
+    from: 'on'
+    to: 'off'
+  condition: []
+  action:
+  - service: switch.turn_off
+    target:
+      entity_id: switch.0x00158d0004082177_left
+  mode: single
+- id: '1627691502056'
+  alias: Беспроводной выключатель в кабинете выключить свет
+  description: ''
+  trigger:
+  - platform: device
+    domain: mqtt
+    device_id: fdc0abe6a4a259eacfb42dff9c96f019
+    type: action
+    subtype: single
+    discovery_id: 0x00158d000283d11f action_single
+  condition:
+  - condition: or
+    conditions:
+    - condition: state
+      state: 'on'
+      entity_id: switch.lumi_lumi_ctrl_neutral2_1c472604_on_off
+    - condition: state
+      entity_id: switch.lumi_lumi_ctrl_neutral2_1c472604_on_off_2
+      state: 'on'
+  action:
+  - service: light.turn_off
+    target:
+      entity_id: light.13b69c533bc2e000_light
+    data: {}
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 1
+      milliseconds: 0
+  - service: switch.turn_off
+    target:
+      entity_id:
+      - switch.lumi_lumi_ctrl_neutral2_1c472604_on_off
+      - switch.lumi_lumi_ctrl_neutral2_1c472604_on_off_2
+  mode: single
+- id: '1627691764775'
+  alias: Беспроводной выключатель в кабинете включить свет
+  description: Беспроводной выключатель в кабинете включить свет
+  trigger:
+  - platform: device
+    domain: mqtt
+    device_id: fdc0abe6a4a259eacfb42dff9c96f019
+    type: action
+    subtype: single
+    discovery_id: 0x00158d000283d11f action_single
+  condition:
+  - condition: state
+    entity_id: switch.lumi_lumi_ctrl_neutral2_1c472604_on_off
+    state: 'off'
+  - condition: and
+    conditions:
+    - condition: state
+      entity_id: switch.lumi_lumi_ctrl_neutral2_1c472604_on_off_2
+      state: 'off'
+  action:
+  - service: switch.turn_on
+    target:
+      entity_id:
+      - switch.lumi_lumi_ctrl_neutral2_1c472604_on_off
+      - switch.lumi_lumi_ctrl_neutral2_1c472604_on_off_2
+  - service: light.turn_on
+    target:
+      entity_id: light.13b69c533bc2e000_light
   mode: single

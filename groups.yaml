@@ -1,0 +1,5 @@
+cabinet_switch:
+  name: Группа_выключатель_кабинет
+  entities:
+      - switch.lumi_lumi_ctrl_neutral2_1c472604_on_off
+      - switch.lumi_lumi_ctrl_neutral2_1c472604_on_off_2

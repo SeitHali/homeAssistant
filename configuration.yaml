@@ -10,6 +10,18 @@ recorder:
 tts:
   - platform: google_translate
 
+http:
+  use_x_forwarded_for: true
+  trusted_proxies:
+    - 127.0.0.1
+    - 172.18.0.0/24
+
+media_player:
+  # Use the Python ADB implementation
+  - platform: androidtv
+    name: Android TV 1
+    host: 192.168.0.33
+
 mqtt:
   discovery: true
   broker: 192.168.0.100
@@ -46,12 +58,11 @@ light:
     entities:
       - light.50ec50db4524_light
       - light.50ec50dc9d46_light
-
-tuya:
-  username: !secret tuya_username
-  password: !secret tuya_password 
-  country_code: 1 
-  platform: smart_life
+  - platform: group
+    name: Подсветка стены
+    entities:
+      - light.bedroom_wall_1
+      - light.bedroom_wall_2
 
 sensor:
   - platform: rest
@@ -59,23 +70,69 @@ sensor:
     resource: http://blynk-cloud.com/umzt1VaG4dbLsh4kIFpbpWAHH6ZY7-y7/get/V1
     value_template: "{{ value_json[0] }}"
     scan_interval: 1
+  - platform: rest
+    name: bedroom_blind_status
+    resource: http://blynk-cloud.com/JTzf06AKCKJd1jEGb6Q1yJhLdH_l-hJv/get/V6
+    value_template: "{{ value_json[0] }}"
+    scan_interval: 1
+  - platform: template
+    sensors:
+      total_energy_pump:
+        unit_of_measurement: kWh
+        value_template: "{{ state_attr('switch.test', 'current_consumption') }}"
 
-# Управление жалюзи в кабинете
+
+#Переключатели
 switch:
   - platform: template
     switches:
+      # Управление жалюзи в кабинете
       cabinet_blinds:
         value_template: "{{ is_state('sensor.cabinet_blind_status', '180') }}"
         turn_on:
-          service: script.close_blinds
+          service: shell_command.close_blinds_cabinet
         turn_off:
-          service: script.open_blinds
+          service: shell_command.open_blinds_cabinet
+      cabinet_window:
+        value_template: "{{ is_state('binary_sensor.lumi_lumi_sensor_magnet_aq2_05b62004_on_off', 'on') }}"
+        turn_on:
+          service: script.open_cabinet_window
+        turn_off:
+          service: script.close_cabinet_window
+      bedroom_blinds:
+        unique_id: bedroom_blinds
+        value_template: "{{ is_state('sensor.bedroom_blind_status', '100') }}"
+        turn_on:
+          service: shell_command.close_blinds_bedroom_1
+        turn_off:
+          service: shell_command.open_blinds_bedroom_1
+  # Управление окном в кабинете
+  - platform: mqtt
+    unique_id: cabinet_window_switch
+    name: "Cabinet_window_switch"
+    state_topic: "drivent-876/CurrentPosition"
+    command_topic: "drivent-876/setTargetPosition"
+    payload_on: "0"
+    payload_off: "100"
+    optimistic: false
+    qos: 0
+    retain: true
 
 shell_command:
-  close_blinds: /usr/bin/curl -X GET http://blynk-cloud.com/umzt1VaG4dbLsh4kIFpbpWAHH6ZY7-y7/update/V1?value=180
-  open_blinds: /usr/bin/curl -X GET http://blynk-cloud.com/umzt1VaG4dbLsh4kIFpbpWAHH6ZY7-y7/update/V1?value=0
+  close_blinds_cabinet: /usr/bin/curl -X GET http://blynk-cloud.com/umzt1VaG4dbLsh4kIFpbpWAHH6ZY7-y7/update/V1?value=180
+  open_blinds_cabinet: /usr/bin/curl -X GET http://blynk-cloud.com/umzt1VaG4dbLsh4kIFpbpWAHH6ZY7-y7/update/V1?value=0
+  close_blinds_bedroom_1: /usr/bin/curl -X GET http://blynk-cloud.com/JTzf06AKCKJd1jEGb6Q1yJhLdH_l-hJv/update/V6?value=100
+  open_blinds_bedroom_1: /usr/bin/curl -X GET http://blynk-cloud.com/JTzf06AKCKJd1jEGb6Q1yJhLdH_l-hJv/update/V6?value=0
+  stop_blinds_bedroom_1: /usr/bin/curl -X GET http://blynk-cloud.com/JTzf06AKCKJd1jEGb6Q1yJhLdH_l-hJv/update/V5?value=1
 
-
+input_number:
+  cabinet_windows_slider:
+    name: Кабинет окно
+    min: 0
+    max: 100
+    step: 1
+    unit_of_measurement: step
+    icon: mdi:window-open
 
 group: !include groups.yaml
 automation: !include automations.yaml
