@@ -79,9 +79,9 @@ switch:
       cabinet_blinds:
         value_template: "{{ is_state('sensor.cabinet_blind_status', '180') }}"
         turn_on:
-          service: shell_command.close_blinds_cabinet
+          service: shell_command.cabinet_close_blinds
         turn_off:
-          service: shell_command.open_blinds_cabinet
+          service: shell_command.cabinet_open_blinds
       cabinet_window:
         value_template: "{{ is_state('binary_sensor.lumi_lumi_sensor_magnet_aq2_05b62004_on_off', 'on') }}"
         turn_on:
@@ -95,21 +95,26 @@ switch:
           service: shell_command.close_blinds_bedroom_1
         turn_off:
           service: shell_command.open_blinds_bedroom_1
+
   # Управление окном в кабинете
   - platform: mqtt
     unique_id: cabinet_window_switch
     name: "Cabinet_window_switch"
-    state_topic: "drivent-876/CurrentPosition"
+    state_topic: "drivent-876/getTargetPosition"
     command_topic: "drivent-876/setTargetPosition"
-    payload_on: "0"
-    payload_off: "100"
+    availability_topic: "drivent-876/LWT" 
+    payload_available: "1"
+    payload_not_available: "0"
+    payload_on: "100"
+    payload_off: "0"
+    value_template: "{%if value | int > 0%} 100 {% else %} 0 {%endif%}"
     optimistic: false
     qos: 0
     retain: true
 
 shell_command:
-  close_blinds_cabinet: /usr/bin/curl -X GET http://blynk-cloud.com/umzt1VaG4dbLsh4kIFpbpWAHH6ZY7-y7/update/V1?value=180
-  open_blinds_cabinet: /usr/bin/curl -X GET http://blynk-cloud.com/umzt1VaG4dbLsh4kIFpbpWAHH6ZY7-y7/update/V1?value=0
+  cabinet_close_blinds: !secret cabinet_blinds_close
+  cabinet_open_blinds: !secret cabinet_blinds_open
   close_blinds_bedroom_1: /usr/bin/curl -X GET http://blynk-cloud.com/JTzf06AKCKJd1jEGb6Q1yJhLdH_l-hJv/update/V6?value=100
   open_blinds_bedroom_1: /usr/bin/curl -X GET http://blynk-cloud.com/JTzf06AKCKJd1jEGb6Q1yJhLdH_l-hJv/update/V6?value=0
   stop_blinds_bedroom_1: /usr/bin/curl -X GET http://blynk-cloud.com/JTzf06AKCKJd1jEGb6Q1yJhLdH_l-hJv/update/V5?value=1

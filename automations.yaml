@@ -57,7 +57,7 @@
   description: Включение света в кабинете
   trigger:
   - platform: state
-    entity_id: light.kabinet_svet
+    entity_id: light.13c76bdb5c4ac001_light
     from: 'off'
     to: 'on'
   condition:
@@ -77,7 +77,7 @@
       - switch.lumi_lumi_ctrl_neutral2_1c472604_on_off_2
   - service: light.turn_on
     target:
-      entity_id: light.kabinet_svet
+      entity_id: light.13c76bdb5c4ac001_light
   mode: single
 - id: '1627513890830'
   alias: Беспроводной выключатель в кабинете
@@ -171,14 +171,14 @@
   action:
   - service: light.toggle
     target:
-      entity_id: light.kabinet_svet
+      entity_id: light.13c76bdb5c4ac001_light
   mode: single
 - id: '1630015332845'
   alias: Cabinet_light_group_turn_off
   description: Выключение света в кабинете
   trigger:
   - platform: state
-    entity_id: light.kabinet_svet
+    entity_id: light.13c76bdb5c4ac001_light
     to: 'off'
     from: 'on'
   condition:
