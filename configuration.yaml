@@ -54,16 +54,19 @@ light:
       - light.bedroom_wall_2
 
 sensor:
+  # Сенсор кабинет жалюзи 
   - platform: rest
     name: cabinet_blind_status
-    resource: http://blynk-cloud.com/umzt1VaG4dbLsh4kIFpbpWAHH6ZY7-y7/get/V1
+    resource: !secret cabinet_blinds_status
     value_template: "{{ value_json[0] }}"
     scan_interval: 1
+  # Сенсор спальня жалюзи-1
   - platform: rest
-    name: bedroom_blind_status
-    resource: http://blynk-cloud.com/JTzf06AKCKJd1jEGb6Q1yJhLdH_l-hJv/get/V6
+    name: bedroom_blind_1_status
+    resource: !secret bedroom_blinds_1_status
     value_template: "{{ value_json[0] }}"
     scan_interval: 1
+  # Сенсор счетчик энергии
   - platform: template
     sensors:
       total_energy_pump:
@@ -82,19 +85,21 @@ switch:
           service: shell_command.cabinet_close_blinds
         turn_off:
           service: shell_command.cabinet_open_blinds
+      # Управление жалюзи в спальне
+      bedroom_blinds:
+        unique_id: bedroom_blinds_1
+        value_template: "{{ is_state('sensor.bedroom_blind_1_status', '100') }}"
+        turn_on:
+          service: shell_command.bedroom_close_blinds_1
+        turn_off:
+          service: shell_command.bedroom_open_blinds_1
+      # Управление окном в кабинете
       cabinet_window:
         value_template: "{{ is_state('binary_sensor.lumi_lumi_sensor_magnet_aq2_05b62004_on_off', 'on') }}"
         turn_on:
           service: script.open_cabinet_window
         turn_off:
           service: script.close_cabinet_window
-      bedroom_blinds:
-        unique_id: bedroom_blinds
-        value_template: "{{ is_state('sensor.bedroom_blind_status', '100') }}"
-        turn_on:
-          service: shell_command.close_blinds_bedroom_1
-        turn_off:
-          service: shell_command.open_blinds_bedroom_1
 
   # Управление окном в кабинете
   - platform: mqtt
@@ -113,11 +118,11 @@ switch:
     retain: true
 
 shell_command:
-  cabinet_close_blinds: !secret cabinet_blinds_close
   cabinet_open_blinds: !secret cabinet_blinds_open
-  close_blinds_bedroom_1: /usr/bin/curl -X GET http://blynk-cloud.com/JTzf06AKCKJd1jEGb6Q1yJhLdH_l-hJv/update/V6?value=100
-  open_blinds_bedroom_1: /usr/bin/curl -X GET http://blynk-cloud.com/JTzf06AKCKJd1jEGb6Q1yJhLdH_l-hJv/update/V6?value=0
-  stop_blinds_bedroom_1: /usr/bin/curl -X GET http://blynk-cloud.com/JTzf06AKCKJd1jEGb6Q1yJhLdH_l-hJv/update/V5?value=1
+  cabinet_close_blinds: !secret cabinet_blinds_close
+  bedroom_open_blinds_1: !secret bedroom_blinds_1_open
+  bedroom_close_blinds_1: !secret bedroom_blinds_1_close
+  bedroom_stop_blinds_1: bedroom_blinds_1_stop
 
 input_number:
   cabinet_windows_slider:
