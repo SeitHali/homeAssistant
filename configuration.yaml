@@ -66,6 +66,18 @@ sensor:
     resource: !secret bedroom_blinds_1_status
     value_template: "{{ value_json[0] }}"
     scan_interval: 1
+  # Сенсор спальня жалюзи-2
+  - platform: rest
+    name: bedroom_blind_2_status
+    resource: !secret bedroom_blinds_2_status
+    value_template: "{{ value_json[0] }}"
+    scan_interval: 1
+  # Сенсор спальня жалюзи-3
+  - platform: rest
+    name: bedroom_blind_3_status
+    resource: !secret bedroom_blinds_3_status
+    value_template: "{{ value_json[0] }}"
+    scan_interval: 1
   # Сенсор счетчик энергии
   - platform: template
     sensors:
@@ -86,13 +98,27 @@ switch:
         turn_off:
           service: shell_command.cabinet_open_blinds
       # Управление жалюзи в спальне
-      bedroom_blinds:
+      bedroom_blinds_1:
         unique_id: bedroom_blinds_1
         value_template: "{{ is_state('sensor.bedroom_blind_1_status', '100') }}"
         turn_on:
           service: shell_command.bedroom_close_blinds_1
         turn_off:
           service: shell_command.bedroom_open_blinds_1
+      bedroom_blinds_2:
+        unique_id: bedroom_blinds_2
+        value_template: "{{ is_state('sensor.bedroom_blind_2_status', '0') }}"
+        turn_on:
+          service: shell_command.bedroom_close_blinds_2
+        turn_off:
+          service: shell_command.bedroom_open_blinds_2
+      bedroom_blinds_3:
+        unique_id: bedroom_blinds_3
+        value_template: "{{ is_state('sensor.bedroom_blind_3_status', '100') }}"
+        turn_on:
+          service: shell_command.bedroom_close_blinds_3
+        turn_off:
+          service: shell_command.bedroom_open_blinds_3
       # Управление окном в кабинете
       cabinet_window:
         value_template: "{{ is_state('binary_sensor.lumi_lumi_sensor_magnet_aq2_05b62004_on_off', 'on') }}"
@@ -123,6 +149,12 @@ shell_command:
   bedroom_open_blinds_1: !secret bedroom_blinds_1_open
   bedroom_close_blinds_1: !secret bedroom_blinds_1_close
   bedroom_stop_blinds_1: bedroom_blinds_1_stop
+  bedroom_open_blinds_2: !secret bedroom_blinds_2_open
+  bedroom_close_blinds_2: !secret bedroom_blinds_2_close
+  bedroom_stop_blinds_2: bedroom_blinds_2_stop
+  bedroom_open_blinds_3: !secret bedroom_blinds_3_open
+  bedroom_close_blinds_3: !secret bedroom_blinds_3_close
+  bedroom_stop_blinds_3: bedroom_blinds_3_stop
 
 input_number:
   cabinet_windows_slider:
