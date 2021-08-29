@@ -148,13 +148,13 @@ shell_command:
   cabinet_close_blinds: !secret cabinet_blinds_close
   bedroom_open_blinds_1: !secret bedroom_blinds_1_open
   bedroom_close_blinds_1: !secret bedroom_blinds_1_close
-  bedroom_stop_blinds_1: bedroom_blinds_1_stop
+  bedroom_stop_blinds_1: !secret bedroom_blinds_1_stop
   bedroom_open_blinds_2: !secret bedroom_blinds_2_open
   bedroom_close_blinds_2: !secret bedroom_blinds_2_close
-  bedroom_stop_blinds_2: bedroom_blinds_2_stop
+  bedroom_stop_blinds_2: !secret bedroom_blinds_2_stop
   bedroom_open_blinds_3: !secret bedroom_blinds_3_open
   bedroom_close_blinds_3: !secret bedroom_blinds_3_close
-  bedroom_stop_blinds_3: bedroom_blinds_3_stop
+  bedroom_stop_blinds_3: !secret bedroom_blinds_3_stop
 
 input_number:
   cabinet_windows_slider:
