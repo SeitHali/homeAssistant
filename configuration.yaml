@@ -64,19 +64,19 @@ sensor:
   - platform: rest
     name: bedroom_blind_1_status
     resource: !secret bedroom_blinds_1_status
-    value_template: "{{ value_json[0] }}"
+    value_template: "{%if (value_json[0] | int) == 0%}Open{% else %}Closed{%endif%}"
     scan_interval: 1
   # Сенсор спальня жалюзи-2
   - platform: rest
     name: bedroom_blind_2_status
     resource: !secret bedroom_blinds_2_status
-    value_template: "{{ value_json[0] }}"
+    value_template: "{%if (value_json[0] | int) == 100%}Open{% else %}Closed{%endif%}"
     scan_interval: 1
   # Сенсор спальня жалюзи-3
   - platform: rest
     name: bedroom_blind_3_status
     resource: !secret bedroom_blinds_3_status
-    value_template: "{{ value_json[0] }}"
+    value_template: "{%if (value_json[0] | int) == 0%}Open{% else %}Closed{%endif%}"
     scan_interval: 1
   # Сенсор счетчик энергии
   - platform: template
@@ -100,21 +100,21 @@ switch:
       # Управление жалюзи в спальне
       bedroom_blinds_1:
         unique_id: bedroom_blinds_1
-        value_template: "{{ is_state('sensor.bedroom_blind_1_status', '100') }}"
+        value_template: "{{ is_state('sensor.bedroom_blind_1_status', 'Closed') }}"
         turn_on:
           service: shell_command.bedroom_close_blinds_1
         turn_off:
           service: shell_command.bedroom_open_blinds_1
       bedroom_blinds_2:
         unique_id: bedroom_blinds_2
-        value_template: "{{ is_state('sensor.bedroom_blind_2_status', '0') }}"
+        value_template: "{{ is_state('sensor.bedroom_blind_2_status', 'Closed') }}"
         turn_on:
           service: shell_command.bedroom_close_blinds_2
         turn_off:
           service: shell_command.bedroom_open_blinds_2
       bedroom_blinds_3:
         unique_id: bedroom_blinds_3
-        value_template: "{{ is_state('sensor.bedroom_blind_3_status', '100') }}"
+        value_template: "{{ is_state('sensor.bedroom_blind_3_status', 'Closed') }}"
         turn_on:
           service: shell_command.bedroom_close_blinds_3
         turn_off:
