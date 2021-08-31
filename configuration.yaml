@@ -31,8 +31,8 @@ mqtt:
   will_message:
     topic: 'homeassistant/status'
     payload: 'offline'
-  username: "mqtt"
-  password: "uvsmsyitv57yigno"
+  username: !secret mqtt_user
+  password: !secret mqtt_password
 
 fan:
   - platform: xiaomi_miio_fan
@@ -78,13 +78,12 @@ sensor:
     resource: !secret bedroom_blinds_3_status
     value_template: "{%if (value_json[0] | int) == 0%}Open{% else %}Closed{%endif%}"
     scan_interval: 1
-  # Сенсор счетчик энергии
   - platform: template
     sensors:
+      # Сенсор счетчик энергии
       total_energy_pump:
         unit_of_measurement: kWh
-        value_template: "{{ state_attr('switch.test', 'current_consumption') }}"
-
+        value_template: "{{ state_attr('switch.test', 'current_consumption') }}"       
 
 #Переключатели
 switch:
@@ -146,15 +145,20 @@ switch:
 shell_command:
   cabinet_open_blinds: !secret cabinet_blinds_open
   cabinet_close_blinds: !secret cabinet_blinds_close
+  #Жалюзи спальня 1
   bedroom_open_blinds_1: !secret bedroom_blinds_1_open
   bedroom_close_blinds_1: !secret bedroom_blinds_1_close
   bedroom_stop_blinds_1: !secret bedroom_blinds_1_stop
+  #Жалюзи спальня 2
   bedroom_open_blinds_2: !secret bedroom_blinds_2_open
   bedroom_close_blinds_2: !secret bedroom_blinds_2_close
   bedroom_stop_blinds_2: !secret bedroom_blinds_2_stop
+  #Жалюзи спальня 3
   bedroom_open_blinds_3: !secret bedroom_blinds_3_open
   bedroom_close_blinds_3: !secret bedroom_blinds_3_close
   bedroom_stop_blinds_3: !secret bedroom_blinds_3_stop
+
+  bedroom_stop_blinds: !secret bedroom_blinds_stop
 
 input_number:
   cabinet_windows_slider:

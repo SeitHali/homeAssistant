@@ -181,15 +181,8 @@
     entity_id: light.13c76bdb5c4ac001_light
     to: 'off'
     from: 'on'
-  condition:
-  - condition: or
-    conditions:
-    - condition: state
-      entity_id: switch.lumi_lumi_ctrl_neutral2_1c472604_on_off
-      state: 'on'
-    - condition: state
-      entity_id: switch.lumi_lumi_ctrl_neutral2_1c472604_on_off_2
-      state: 'on'
+    for: '30'
+  condition: []
   action:
   - service: switch.turn_off
     target:
@@ -217,4 +210,79 @@
     data:
       transition: 1
       brightness_step: 25
+  mode: single
+
+  #Закрытие жалюзи по кнопке у окна
+- id: '1630367754768'
+  alias: Bedroom_button_close_blinds
+  description: Закрыть жалюзи по кнопке у окна
+  trigger:
+  - device_id: 7409a659e5c1e284a50a741e31385923
+    domain: zha
+    platform: device
+    type: remote_button_short_press
+    subtype: remote_button_short_press
+  condition:
+  - condition: or
+    conditions:
+    - condition: state
+      entity_id: sensor.bedroom_blind_1_status
+      state: Open
+    - condition: state
+      entity_id: sensor.bedroom_blind_2_status
+      state: Open
+    - condition: state
+      entity_id: sensor.bedroom_blind_3_status
+      state: Open
+  action:
+  - service: switch.turn_on
+    target:
+      entity_id:
+      - switch.bedroom_blinds_2_2
+      - switch.bedroom_blinds_2
+      - switch.bedroom_blinds_3
+  mode: single
+
+  #Открытие жалюзи по кнопке у окна
+- id: '1630368722194'
+  alias: Bedroom_button_open_blinds
+  description: ''
+  trigger:
+  - device_id: 7409a659e5c1e284a50a741e31385923
+    domain: zha
+    platform: device
+    type: remote_button_short_press
+    subtype: remote_button_short_press
+  condition:
+  - condition: and
+    conditions:
+    - condition: template
+      value_template: >
+       {% set bedrom_close_last_updated = as_timestamp(strptime(states.script.bedroom_close_blinds.last_changed, "%Y-%m-%d  %H:%M:%S")) %}  
+       {% set close_seconds = now().timestamp()-bedrom_close_last_updated %}  
+       {% set bedrom_open_last_updated = as_timestamp(strptime(states.script.bedroom_open_blinds.last_changed, "%Y-%m-%d  %H:%M:%S")) %}  
+       {% set open_seconds = now().timestamp()-bedrom_open_last_updated %}  
+       {{([close_seconds, open_seconds] | min) > 3}}
+    - condition: state
+      entity_id: sensor.bedroom_blind_1_status
+      state: Closed
+    - condition: state
+      entity_id: sensor.bedroom_blind_2_status
+      state: Closed
+    - condition: state
+      entity_id: sensor.bedroom_blind_3_status
+      state: Closed
+  action:
+  - service: switch.turn_off
+    target:
+      entity_id:
+      - switch.bedroom_blinds_2_2
+      - switch.bedroom_blinds_2
+      - switch.bedroom_blinds_3
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 0
+      milliseconds: 550
+  - service: shell_command.bedroom_stop_blinds
   mode: single
