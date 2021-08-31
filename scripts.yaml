@@ -42,7 +42,13 @@ unlock_door:
       payload: unlock
   mode: single
   alias: unlock_door
+test_stop:
+  alias: TEST STOP
+  sequence:
+  - service: shell_command.bedroom_stop_blinds
+  mode: single
 bedroom_close_blinds:
+  alias: bedroom_close_blinds
   sequence:
   - service: switch.turn_on
     target:
@@ -51,42 +57,15 @@ bedroom_close_blinds:
       - switch.bedroom_blinds_2_2
       - switch.bedroom_blinds_3
   mode: single
-  alias: Bedroom_close_blinds
   icon: hass:blinds
 bedroom_open_blinds:
-  alias: Bedroom_open_blinds
+  alias: bedroom_open_blinds
   sequence:
   - service: switch.turn_off
     target:
       entity_id:
+      - switch.bedroom_blinds_2
       - switch.bedroom_blinds_2_2
-  - delay:
-      hours: 0
-      minutes: 0
-      seconds: 0
-      milliseconds: 700
-  - service: shell_command.bedroom_stop_blinds_2
-  mode: single
-  icon: hass:blinds
-test_stop:
-  alias: TEST STOP
-  sequence:
-  - service: shell_command.bedroom_stop_blinds
-  mode: single
-bedroom_open_blinds_2:
-  alias: Bedroom_open_blinds_2
-  sequence:
-  - condition: state
-    entity_id: sensor.bedroom_blind_2_status
-    state: Close
-  - service: switch.turn_on
-    target:
-      entity_id: switch.bedroom_blinds_2_2
-  - delay:
-      hours: 0
-      minutes: 0
-      seconds: 0
-      milliseconds: 700
-  - service: shell_command.bedroom_stop_blinds_2
+      - switch.bedroom_blinds_3
   mode: single
   icon: hass:blinds

@@ -211,8 +211,6 @@
       transition: 1
       brightness_step: 25
   mode: single
-
-  #Закрытие жалюзи по кнопке у окна
 - id: '1630367754768'
   alias: Bedroom_button_close_blinds
   description: Закрыть жалюзи по кнопке у окна
@@ -235,15 +233,8 @@
       entity_id: sensor.bedroom_blind_3_status
       state: Open
   action:
-  - service: switch.turn_on
-    target:
-      entity_id:
-      - switch.bedroom_blinds_2_2
-      - switch.bedroom_blinds_2
-      - switch.bedroom_blinds_3
+  - service: script.bedroom_close_blinds
   mode: single
-
-  #Открытие жалюзи по кнопке у окна
 - id: '1630368722194'
   alias: Bedroom_button_open_blinds
   description: ''
@@ -257,12 +248,11 @@
   - condition: and
     conditions:
     - condition: template
-      value_template: >
-       {% set bedrom_close_last_updated = as_timestamp(strptime(states.script.bedroom_close_blinds.last_changed, "%Y-%m-%d  %H:%M:%S")) %}  
-       {% set close_seconds = now().timestamp()-bedrom_close_last_updated %}  
-       {% set bedrom_open_last_updated = as_timestamp(strptime(states.script.bedroom_open_blinds.last_changed, "%Y-%m-%d  %H:%M:%S")) %}  
-       {% set open_seconds = now().timestamp()-bedrom_open_last_updated %}  
-       {{([close_seconds, open_seconds] | min) > 3}}
+      value_template: '{% set bedrom_close_last_updated = as_timestamp(strptime(states.script.bedroom_close_blinds.last_changed,
+        "%Y-%m-%d  %H:%M:%S")) %}    {% set close_seconds = now().timestamp()-bedrom_close_last_updated
+        %}   {% set bedrom_open_last_updated = as_timestamp(strptime(states.script.bedroom_open_blinds.last_changed,
+        "%Y-%m-%d  %H:%M:%S")) %}    {% set open_seconds = now().timestamp()-bedrom_open_last_updated
+        %}    {{([close_seconds, open_seconds] | min) > 5}}'
     - condition: state
       entity_id: sensor.bedroom_blind_1_status
       state: Closed
@@ -273,12 +263,7 @@
       entity_id: sensor.bedroom_blind_3_status
       state: Closed
   action:
-  - service: switch.turn_off
-    target:
-      entity_id:
-      - switch.bedroom_blinds_2_2
-      - switch.bedroom_blinds_2
-      - switch.bedroom_blinds_3
+  - service: script.bedroom_open_blinds
   - delay:
       hours: 0
       minutes: 0
