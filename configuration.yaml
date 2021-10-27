@@ -16,12 +16,6 @@ http:
     - 127.0.0.1
     - 172.18.0.0/24
 
-media_player:
-  # Use the Python ADB implementation
-  - platform: androidtv
-    name: Android TV 1
-    host: 192.168.0.33
-
 mqtt:
   discovery: true
   broker: 192.168.0.100
@@ -125,6 +119,21 @@ switch:
           service: script.open_cabinet_window
         turn_off:
           service: script.close_cabinet_window
+      # Управление жалюзи в спальне
+      bedroom_blinds_switch:
+        value_template: "{% if is_state('sensor.bedroom_blind_1_status', 'Closed') or is_state('sensor.bedroom_blind_2_status', 'Closed') or  is_state('sensor.bedroom_blind_3_status', 'Closed') %}  on {% else %} off {% endif %}"
+        turn_on:
+          service: script.bedroom_open_blinds
+        turn_off:
+          service: script.bedroom_close_blinds
+        icon_template: >-
+          {% if is_state('sensor.bedroom_blind_1_status', 'Closed') or 
+                is_state('sensor.bedroom_blind_2_status', 'Closed') or 
+                is_state('sensor.bedroom_blind_3_status', 'Closed') %} 
+          mdi:television 
+          {% else %} 
+          mdi:television-off 
+          {% endif %}
 
   # Управление окном в кабинете
   - platform: mqtt
@@ -157,7 +166,7 @@ shell_command:
   bedroom_open_blinds_3: !secret bedroom_blinds_3_open
   bedroom_close_blinds_3: !secret bedroom_blinds_3_close
   bedroom_stop_blinds_3: !secret bedroom_blinds_3_stop
-
+  #Жалюзи стоп
   bedroom_stop_blinds: !secret bedroom_blinds_stop
 
 input_number:

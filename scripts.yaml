@@ -8,12 +8,6 @@ turn_off_all_lights:
     target:
       entity_id: switch.lumi_lumi_ctrl_neutral2_1c472604_on_off
   mode: single
-disable_monitor:
-  sequence:
-  - service: mqtt.publish
-    data_template:
-      topic: pc_control/monitor
-      payload: 'ON'
 close_cabinet_window:
   sequence:
   - service: mqtt.publish
@@ -27,13 +21,13 @@ open_cabinet_window:
       topic: drivent-876/setTargetPosition
       payload: 100
 test:
-  alias: lock_door
   sequence:
   - service: mqtt.publish
     data:
       topic: smartlock/set
       payload: lock
   mode: single
+  alias: Прихожая_закрыть_дверь
 unlock_door:
   sequence:
   - service: mqtt.publish
@@ -41,12 +35,7 @@ unlock_door:
       topic: smartlock/set
       payload: unlock
   mode: single
-  alias: unlock_door
-test_stop:
-  alias: TEST STOP
-  sequence:
-  - service: shell_command.bedroom_stop_blinds
-  mode: single
+  alias: Прихожая_открыть_дверь
 bedroom_close_blinds:
   alias: bedroom_close_blinds
   sequence:
@@ -69,3 +58,27 @@ bedroom_open_blinds:
       - switch.bedroom_blinds_3
   mode: single
   icon: hass:blinds
+'1635349875799':
+  sequence:
+  - service: switch.turn_off
+    target:
+      entity_id:
+      - switch.0x00158d000425e158_left
+      - switch.0x00158d000425e158_right
+      - switch.bedroom_wired_switch_left
+      - switch.bedroom_wired_switch_right
+      - switch.cabinet_wired_switch_left
+      - switch.cabinet_wired_switch_right
+      - switch.wardrobe_wired_switch_left
+  - service: switch.turn_on
+    target:
+      entity_id:
+      - switch.lobby_plug_light
+  - service: light.turn_off
+    target:
+      entity_id:
+      - light.podsvetka_steny
+      - light.beedrom_light_cell
+      - light.192_168_0_47
+  mode: single
+  alias: Turn_off_light_sleep_all
