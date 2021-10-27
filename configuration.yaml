@@ -121,7 +121,14 @@ switch:
           service: script.close_cabinet_window
       # Управление жалюзи в спальне
       bedroom_blinds_switch:
-        value_template: "{% if is_state('sensor.bedroom_blind_1_status', 'Closed') or is_state('sensor.bedroom_blind_2_status', 'Closed') or  is_state('sensor.bedroom_blind_3_status', 'Closed') %}  on {% else %} off {% endif %}"
+        friendly_name: "Спальня_жалюзи"
+        value_template: "{% if is_state('sensor.bedroom_blind_1_status', 'Closed') or 
+                               is_state('sensor.bedroom_blind_2_status', 'Closed') or  
+                               is_state('sensor.bedroom_blind_3_status', 'Closed') %} 
+                         false 
+                         {% else %} 
+                         true 
+                         {% endif %}"
         turn_on:
           service: script.bedroom_open_blinds
         turn_off:
@@ -130,9 +137,9 @@ switch:
           {% if is_state('sensor.bedroom_blind_1_status', 'Closed') or 
                 is_state('sensor.bedroom_blind_2_status', 'Closed') or 
                 is_state('sensor.bedroom_blind_3_status', 'Closed') %} 
-          mdi:television 
+          mdi:window-shutter
           {% else %} 
-          mdi:television-off 
+          mdi:window-shutter-open
           {% endif %}
 
   # Управление окном в кабинете
