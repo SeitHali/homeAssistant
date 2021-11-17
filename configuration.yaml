@@ -101,6 +101,12 @@ switch:
           service: shell_command.cabinet_close_blinds
         turn_off:
           service: shell_command.cabinet_open_blinds
+        icon_template: >-
+          {% if is_state('sensor.cabinet_blind_status', '180') %} 
+          mdi:window-shutter
+          {% else %} 
+          mdi:window-shutter-open
+          {% endif %}
       # Управление жалюзи в спальне
       bedroom_blinds_1:
         unique_id: bedroom_blinds_1
