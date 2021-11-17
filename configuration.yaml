@@ -153,22 +153,6 @@ switch:
           mdi:window-shutter-open
           {% endif %}
 
-  # Управление окном в кабинете
-  - platform: mqtt
-    unique_id: cabinet_window_switch
-    name: "Cabinet_window_switch"
-    state_topic: "drivent-876/getTargetPosition"
-    command_topic: "drivent-876/setTargetPosition"
-    availability_topic: "drivent-876/LWT" 
-    payload_available: "1"
-    payload_not_available: "0"
-    payload_on: "100"
-    payload_off: "0"
-    value_template: "{%if value | int > 0%} 100 {% else %} 0 {%endif%}"
-    optimistic: false
-    qos: 0
-    retain: true
-
 shell_command:
   cabinet_open_blinds: !secret cabinet_blinds_open
   cabinet_close_blinds: !secret cabinet_blinds_close
@@ -197,7 +181,7 @@ input_number:
     icon: mdi:window-open
 
 group: !include groups.yaml
-#automation: !include automation.yaml
+#automation: !include automations.yaml
 automation: !include_dir_merge_list automation/
 script: !include scripts.yaml
 scene: !include scenes.yaml

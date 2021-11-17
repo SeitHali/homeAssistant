@@ -41,6 +41,21 @@
   - service: switch.toggle
     target:
       entity_id: switch.cabinet_window_switch
+#Остановить открытие окна:
+- alias: Cabinet_button_windows_stop_automations
+  trigger:
+  - platform: device
+    domain: mqtt
+    device_id: a98b5a68be4d5bf1f6423c07a4df352e
+    type: action
+    subtype: hold
+    discovery_id: 0x00158d0006baa466 action_hold
+  action:
+  - service: mqtt.publish
+    data:
+      topic: drivent-876/setTargetPosition
+      payload: stop
+  mode: single
 #Открытие шторы по одинарному нажатию
 - alias: Cabinet_button_curtain_automations
   trigger:
@@ -55,7 +70,7 @@
     target:
       entity_id: cover.cabinet_curtain
 #Остановить шторы
-- alias: Cabinet_button_stop_curtain_automations
+- alias: Cabinet_button_curtain_stop_automations
   trigger:
   - platform: device
     domain: mqtt
