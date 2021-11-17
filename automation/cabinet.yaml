@@ -1,0 +1,17 @@
+#Включение света по беспроводному выключателю (одинарное нажатие)
+- alias: Cabinet_wireless_switch
+  trigger:
+  - platform: device
+    domain: mqtt
+    device_id: fdc0abe6a4a259eacfb42dff9c96f019
+    type: click
+    subtype: single
+    discovery_id: 0x00158d000283d11f click_single
+  action:
+    - service: >
+        {% if is_state('switch.cabinet_wired_switch_left', "on")  or  is_state('switch.cabinet_wired_switch_right', "on")  %}
+            script.cabinet_lights_off
+        {% else %}
+            script.cabinet_lights_on
+        {% endif %}  
+  mode: single

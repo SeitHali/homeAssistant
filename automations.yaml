@@ -201,40 +201,28 @@
       transition: 1
       brightness_step: 25
   mode: single
-- id: '1630367754768'
-  alias: Bedroom_button_close_blinds
-  description: Закрыть жалюзи по кнопке у окна
+- id: '1630368722194'
+  alias: Bedroom_blinds_control
+  description: ''
   trigger:
   - platform: device
     domain: mqtt
-    device_id: a98b5a68be4d5bf1f6423c07a4df352e
+    device_id: 654987f078522df809a6b0942bf0b210
     type: action
     subtype: single
-    discovery_id: 0x00158d0006baa466 action_single
-  condition:
-  - condition: or
-    conditions:
-    - condition: state
-      entity_id: sensor.bedroom_blind_1_status
-      state: Open
-    - condition: state
-      entity_id: sensor.bedroom_blind_2_status
-      state: Open
-    - condition: state
-      entity_id: sensor.bedroom_blind_3_status
-      state: Open
-  action:
-  - service: script.bedroom_close_blinds
-  mode: single
-- id: '1630368722194'
-  alias: Bedroom_button_open_blinds
-  description: ''
-  trigger:
-  - device_id: 7409a659e5c1e284a50a741e31385923
-    domain: zha
-    platform: device
-    type: remote_button_short_press
-    subtype: remote_button_short_press
+    discovery_id: 0x00158d0006baa473 action_single
+  - platform: device
+    domain: mqtt
+    device_id: 2d8f3f5da0b858bed7b9e820ba9fd27a
+    type: action
+    subtype: button_3_single
+    discovery_id: 0x04cf8cdf3c7d7102 action_button_3_single
+  - platform: device
+    domain: mqtt
+    device_id: 5a981952fbb45eca47ebda17ec8851a6
+    type: action
+    subtype: button_3_single
+    discovery_id: 0x04cf8cdf3c7d3c1c action_button_3_single
   condition:
   - condition: and
     conditions:
@@ -244,23 +232,10 @@
         %}   {% set bedrom_open_last_updated = as_timestamp(strptime(states.script.bedroom_open_blinds.last_changed,
         "%Y-%m-%d  %H:%M:%S")) %}    {% set open_seconds = now().timestamp()-bedrom_open_last_updated
         %}    {{([close_seconds, open_seconds] | min) > 5}}'
-    - condition: state
-      entity_id: sensor.bedroom_blind_1_status
-      state: Closed
-    - condition: state
-      entity_id: sensor.bedroom_blind_2_status
-      state: Closed
-    - condition: state
-      entity_id: sensor.bedroom_blind_3_status
-      state: Closed
   action:
-  - service: script.bedroom_open_blinds
-  - delay:
-      hours: 0
-      minutes: 0
-      seconds: 0
-      milliseconds: 550
-  - service: shell_command.bedroom_stop_blinds
+  - service: switch.toggle
+    target:
+      entity_id: switch.bedroom_blinds_switch
   mode: single
 - id: '1632411887622'
   alias: Гардероб_выключение света
@@ -408,4 +383,82 @@
   - service: light.toggle
     target:
       entity_id: light.beedrom_light_cell
+  mode: single
+- id: '1635445468901'
+  alias: Bedroom_curtains_control
+  description: ''
+  trigger:
+  - platform: device
+    domain: mqtt
+    device_id: 2d8f3f5da0b858bed7b9e820ba9fd27a
+    type: action
+    subtype: button_3_double
+    discovery_id: 0x04cf8cdf3c7d7102 action_button_3_double
+  - platform: device
+    domain: mqtt
+    device_id: 5a981952fbb45eca47ebda17ec8851a6
+    type: action
+    subtype: button_3_double
+    discovery_id: 0x04cf8cdf3c7d3c1c action_button_3_double
+  - platform: device
+    domain: mqtt
+    device_id: c21d4394648133a649c5600004a01ad3
+    type: action
+    subtype: single
+    discovery_id: 0x00158d0006ba6fe7 action_single
+  condition: []
+  action:
+  - service: cover.toggle
+    target:
+      entity_id: cover.bedroom_curtain
+  mode: single
+- id: '1635445748216'
+  alias: Bedroom_curtains_hold
+  description: ''
+  trigger:
+  - platform: device
+    domain: mqtt
+    device_id: 2d8f3f5da0b858bed7b9e820ba9fd27a
+    type: action
+    subtype: button_3_hold
+    discovery_id: 0x04cf8cdf3c7d7102 action_button_3_hold
+  - platform: device
+    domain: mqtt
+    device_id: 5a981952fbb45eca47ebda17ec8851a6
+    type: action
+    subtype: button_3_hold
+    discovery_id: 0x04cf8cdf3c7d3c1c action_button_3_hold
+  condition: []
+  action:
+  - service: cover.toggle
+    target:
+      entity_id: cover.bedroom_curtain
+  mode: single
+- id: '1635445979445'
+  alias: Bedroom_curtains_stop
+  description: ''
+  trigger:
+  - platform: device
+    domain: mqtt
+    device_id: 2d8f3f5da0b858bed7b9e820ba9fd27a
+    type: action
+    subtype: button_3_release
+    discovery_id: 0x04cf8cdf3c7d7102 action_button_3_release
+  - platform: device
+    domain: mqtt
+    device_id: 5a981952fbb45eca47ebda17ec8851a6
+    type: action
+    subtype: button_3_release
+    discovery_id: 0x04cf8cdf3c7d3c1c action_button_3_release
+  - platform: device
+    domain: mqtt
+    device_id: c21d4394648133a649c5600004a01ad3
+    type: action
+    subtype: double
+    discovery_id: 0x00158d0006ba6fe7 action_double
+  condition: []
+  action:
+  - service: cover.stop_cover
+    target:
+      entity_id: cover.bedroom_curtain
   mode: single

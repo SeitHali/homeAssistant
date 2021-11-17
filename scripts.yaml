@@ -50,12 +50,12 @@ bedroom_close_blinds:
 bedroom_open_blinds:
   alias: bedroom_open_blinds
   sequence:
-  - service: switch.turn_off
+  - service: script.turn_on
     target:
       entity_id:
-      - switch.bedroom_blinds_2
-      - switch.bedroom_blinds_2_2
-      - switch.bedroom_blinds_3
+      - script.bedroom_open_blinds_1
+      - script.bedroom_open_blinds_2
+      - script.bedroom_open_blinds_3
   mode: single
   icon: hass:blinds
 '1635349875799':
@@ -79,6 +79,89 @@ bedroom_open_blinds:
       entity_id:
       - light.podsvetka_steny
       - light.beedrom_light_cell
+      - light.yeelight_lamp15_0xece9081
+      - light.yeelight_lamp15_0xece9081_ambilight
       - light.192_168_0_47
   mode: single
   alias: Turn_off_light_sleep_all
+bedroom_stop_blinds_1:
+  sequence:
+  - service: shell_command.bedroom_stop_blinds_1
+  mode: single
+  alias: bedroom_stop_blinds_1
+bedrpp:
+  sequence:
+  - service: shell_command.bedroom_stop_blinds_2
+  mode: single
+  alias: bedroom_stop_blinds_2
+bedroom_stop_blinds_3:
+  alias: bedroom_stop_blinds_3
+  sequence:
+  - service: shell_command.bedroom_stop_blinds_3
+  mode: single
+bedroom_stop_all_blinds:
+  sequence:
+  - service: shell_command.bedroom_stop_blinds
+  mode: single
+  alias: bedroom_stop_all_blinds
+bedroom_open_blinds_1:
+  alias: bedroom_open_blinds_1
+  sequence:
+  - service: switch.turn_off
+    target:
+      entity_id: switch.bedroom_blinds_2
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 0
+      milliseconds: 400
+  - service: shell_command.bedroom_stop_blinds_1
+  mode: single
+bedroom_open_blinds_2:
+  alias: bedroom_open_blinds_2
+  sequence:
+  - service: switch.turn_off
+    target:
+      entity_id: switch.bedroom_blinds_2_2
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 0
+      milliseconds: 610
+  - service: shell_command.bedroom_stop_blinds_2
+  mode: single
+bedroom_open_blinds_3:
+  alias: bedroom_open_blinds_3
+  sequence:
+  - service: switch.turn_off
+    target:
+      entity_id: switch.bedroom_blinds_3
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 0
+      milliseconds: 800
+  - service: shell_command.bedroom_stop_blinds_3
+  mode: single
+
+#кабинет включить свет
+cabinet_lights_on:
+  alias: cabinet_lights_on
+  sequence:
+  - service: switch.turn_on
+    target:
+      entity_id: 
+      - switch.cabinet_wired_switch_left
+      - switch.cabinet_wired_switch_right
+  mode: single
+
+#кабинет выключить свет
+cabinet_lights_off:
+  alias: cabinet_lights_off
+  sequence:
+  - service: switch.turn_off
+    target:
+      entity_id: 
+      - switch.cabinet_wired_switch_left
+      - switch.cabinet_wired_switch_right
+  mode: single

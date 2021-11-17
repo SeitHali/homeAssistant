@@ -15,6 +15,7 @@ http:
   trusted_proxies:
     - 127.0.0.1
     - 172.18.0.0/24
+    - 172.18.0.5
 
 mqtt:
   discovery: true
@@ -78,6 +79,16 @@ sensor:
       total_energy_pump:
         unit_of_measurement: kWh
         value_template: "{{ state_attr('switch.test', 'current_consumption') }}"       
+
+binary_sensor:
+  - platform: template
+    sensors:
+      bedroom_project_energy_sensor:
+        friendly_name: "Проектор включен"
+        value_template: >-
+          {% if (state_attr('sensor.bedroom_plug_projector_energy', 'power')) > 10 %} true
+          {% else %} false
+          {% endif %} 
 
 #Переключатели
 switch:
@@ -186,7 +197,8 @@ input_number:
     icon: mdi:window-open
 
 group: !include groups.yaml
-automation: !include automations.yaml
+#automation: !include automation.yaml
+automation: !include_dir_merge_list automation/
 script: !include scripts.yaml
 scene: !include scenes.yaml
 
