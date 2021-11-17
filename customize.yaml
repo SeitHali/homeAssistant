@@ -1,0 +1,4 @@
+cover.cabinet_curtain:
+  device_class: curtain
+cover.bedroom_curtain:
+  device_class: curtain

@@ -97,6 +97,7 @@ switch:
       # Управление жалюзи в кабинете
       cabinet_blinds:
         value_template: "{{ is_state('sensor.cabinet_blind_status', '0') }}"
+        friendly_name: "Кабинет_жалюзи"
         turn_on:
           service: shell_command.cabinet_open_blinds
         turn_off:
