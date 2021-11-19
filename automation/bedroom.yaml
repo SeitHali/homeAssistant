@@ -191,3 +191,17 @@
     target:
       entity_id: cover.bedroom_curtain
   mode: single
+
+  #Остановить шторы
+- alias: Bedroom_button_curtain_close
+  trigger:
+  - platform: device
+    domain: mqtt
+    device_id: c21d4394648133a649c5600004a01ad3
+    type: click
+    subtype: hold
+    discovery_id: 0x00158d0006ba6fe7 action_hold
+  action:
+  - service: cover.open_cover
+    target:
+      entity_id: cover.bedroom_curtain

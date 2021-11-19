@@ -15,6 +15,7 @@
             script.cabinet_lights_on
         {% endif %}  
   mode: single
+
 #Открытие жалюзи по кнопке
 - alias: Cabinet_button_blinds_automations
   trigger:
@@ -29,6 +30,7 @@
     target:
       entity_id: switch.cabinet_blinds
 #Открытие окна по кнопке
+
 - alias: Cabinet_button_windows_automations
   trigger:
   - platform: device
@@ -41,6 +43,7 @@
   - service: cover.toggle 
     target:
       entity_id: cover.cabinet_windows
+
 #Остановить открытие окна:
 - alias: Cabinet_button_windows_stop_automations
   trigger:
@@ -56,6 +59,7 @@
       topic: drivent-876/setTargetPosition
       payload: stop
   mode: single
+
 #Открытие шторы по одинарному нажатию
 - alias: Cabinet_button_curtain_automations
   trigger:
@@ -69,6 +73,7 @@
   - service: cover.toggle
     target:
       entity_id: cover.cabinet_curtain
+
 #Остановить шторы
 - alias: Cabinet_button_curtain_stop_automations
   trigger:
@@ -80,6 +85,20 @@
     discovery_id: 0x00158d0006d3e50d action_double
   action:
   - service: cover.stop_cover
+    target:
+      entity_id: cover.cabinet_curtain
+
+#Остановить шторы
+- alias: Cabinet_button_curtain_close
+  trigger:
+  - platform: device
+    domain: mqtt
+    device_id: 0b2c3c9bf414b91e906229d09379c1e1
+    type: click
+    subtype: hold
+    discovery_id: 0x00158d0006d3e50d action_hold
+  action:
+  - service: cover.open_cover
     target:
       entity_id: cover.cabinet_curtain
   
