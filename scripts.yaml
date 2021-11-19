@@ -52,10 +52,10 @@ bedroom_open_blinds:
   sequence:
   - service: script.turn_on
     target:
-      entity_id:
-      - script.bedroom_open_blinds_1
-      - script.bedroom_open_blinds_2
-      - script.bedroom_open_blinds_3
+      entity_id: "{% if ((as_timestamp(now()) - as_timestamp(states.script.bedroom_close_blinds.last_changed))\
+        \ > (states('input_number.bedroom_blinds_delay') | int) ) %}\n    script.bedroom_open_blinds_1,\
+        \ script.bedroom_open_blinds_2, script.bedroom_open_blinds_3\n{% else %}\n\
+        \    script.empty\n{% endif %} \n"
   mode: single
   icon: hass:blinds
 '1635349875799':
@@ -143,25 +143,25 @@ bedroom_open_blinds_3:
       milliseconds: 800
   - service: shell_command.bedroom_stop_blinds_3
   mode: single
-
-#кабинет включить свет
 cabinet_lights_on:
   alias: cabinet_lights_on
   sequence:
   - service: switch.turn_on
     target:
-      entity_id: 
+      entity_id:
       - switch.cabinet_wired_switch_left
       - switch.cabinet_wired_switch_right
   mode: single
-
-#кабинет выключить свет
 cabinet_lights_off:
   alias: cabinet_lights_off
   sequence:
   - service: switch.turn_off
     target:
-      entity_id: 
+      entity_id:
       - switch.cabinet_wired_switch_left
       - switch.cabinet_wired_switch_right
+  mode: single
+empty:
+  alias: empty
+  sequence: []
   mode: single

@@ -38,9 +38,9 @@
     subtype: double
     discovery_id: 0x00158d0006baa466 click_double
   action:
-  - service: switch.toggle
+  - service: cover.toggle 
     target:
-      entity_id: switch.cabinet_window_switch
+      entity_id: cover.cabinet_windows
 #Остановить открытие окна:
 - alias: Cabinet_button_windows_stop_automations
   trigger:

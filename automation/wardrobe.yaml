@@ -1,0 +1,22 @@
+- alias: Wardrobe_lights_on
+  trigger:
+  - type: opened
+    platform: device
+    device_id: 412bd1683899d7458462973a1e569a1f
+    entity_id: binary_sensor.wardrobe_door_status_contact
+    domain: binary_sensor
+  action:
+  - service: switch.turn_on
+    target:
+      entity_id: switch.wardrobe_wired_switch_left
+- alias: Wardrobe_lights_off
+  trigger:
+  - type: not_opened
+    platform: device
+    device_id: 412bd1683899d7458462973a1e569a1f
+    entity_id: binary_sensor.wardrobe_door_status_contact
+    domain: binary_sensor
+  action:
+  - service: switch.turn_off
+    target:
+      entity_id: switch.wardrobe_wired_switch_left

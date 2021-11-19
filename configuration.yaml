@@ -80,16 +80,6 @@ sensor:
         unit_of_measurement: kWh
         value_template: "{{ state_attr('switch.test', 'current_consumption') }}"       
 
-binary_sensor:
-  - platform: template
-    sensors:
-      bedroom_project_energy_sensor:
-        friendly_name: "Проектор включен"
-        value_template: >-
-          {% if (state_attr('sensor.bedroom_plug_projector_energy', 'power')) > 10 %} true
-          {% else %} false
-          {% endif %} 
-
 #Переключатели
 switch:
   - platform: template
@@ -179,13 +169,13 @@ shell_command:
   bedroom_stop_blinds: !secret bedroom_blinds_stop
 
 input_number:
-  cabinet_windows_slider:
-    name: Кабинет окно
+  bedroom_blinds_delay:
+    name: Спальня_задержка_жалюзи
     min: 0
-    max: 100
+    max: 30
     step: 1
-    unit_of_measurement: step
-    icon: mdi:window-open
+    mode: box
+    icon: mdi:clipboard-text-clock-outline
 
 group: !include groups.yaml
 #automation: !include automations.yaml
