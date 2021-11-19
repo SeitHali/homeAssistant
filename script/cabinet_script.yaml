@@ -1,0 +1,14 @@
+#Калибровка штор
+cabinet_curtain_calibrate:
+  alias: Калибровка штор
+  sequence:
+  - service: mqtt.publish
+    data:
+      topic: zigbee2mqtt/0x00158d0004170563/set
+      payload: "{ 'options': { 'reset_limits': true } }"
+  - service: cover.close_cover
+    entity_id: cover.cabinet_curtain
+  - delay:
+      seconds: 13 
+  - service: cover.open_cover
+    entity_id: cover.cabinet_curtain

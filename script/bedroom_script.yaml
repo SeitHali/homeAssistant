@@ -1,0 +1,100 @@
+#Закрыть все жалюзи
+bedroom_close_blinds:
+  alias: bedroom_close_blinds
+  sequence:
+  - service: switch.turn_on
+    target:
+      entity_id: >
+        {% if ((as_timestamp(now()) - as_timestamp(states.script.bedroom_open_blinds.last_changed)) > (states('input_number.bedroom_blinds_delay') | int) ) %}
+            switch.bedroom_blinds_2, switch.bedroom_blinds_2_2, switch.bedroom_blinds_3
+        {% else %}
+            script.empty
+        {% endif %} 
+  mode: single
+  icon: hass:blinds
+#Открыть все жалюзи
+bedroom_open_blinds:
+  alias: bedroom_open_blinds
+  sequence:
+  - service: script.turn_on
+    target:
+      entity_id: >
+        {% if ((as_timestamp(now()) - as_timestamp(states.script.bedroom_close_blinds.last_changed)) > (states('input_number.bedroom_blinds_delay') | int) ) %}
+            script.bedroom_open_blinds_1, script.bedroom_open_blinds_2, script.bedroom_open_blinds_3
+        {% else %}
+            script.empty
+        {% endif %} 
+  mode: single
+  icon: hass:blinds
+#Остановить жалюзи 1
+bedroom_stop_blinds_1:
+  sequence:
+  - service: shell_command.bedroom_stop_blinds_1
+  mode: single
+  alias: bedroom_stop_blinds_1 
+#Остановить жалюзи 2
+bedroom_stop_blinds_2:
+  sequence:
+  - service: shell_command.bedroom_stop_blinds_2
+  mode: single
+  alias: bedroom_stop_blinds_2
+#Остановить жалюзи 3
+bedroom_stop_blinds_3:
+  alias: bedroom_stop_blinds_3
+  sequence:
+  - service: shell_command.bedroom_stop_blinds_3
+  mode: single
+#Остановить все жалюзи
+bedroom_stop_all_blinds:
+  sequence:
+  - service: shell_command.bedroom_stop_blinds
+  mode: single
+  alias: bedroom_stop_all_blinds
+#Открыть жалюзи 1
+bedroom_open_blinds_1:
+  alias: bedroom_open_blinds_1
+  sequence:
+  - service: switch.turn_off
+    target:
+      entity_id: switch.bedroom_blinds_2
+  - delay:
+      milliseconds: "{{ states('input_number.bedroom_blinds_1_delay') | int }}"
+  - service: shell_command.bedroom_stop_blinds_1
+  mode: single
+#Открыть жалюзи 2
+bedroom_open_blinds_2:
+  alias: bedroom_open_blinds_2
+  sequence:
+  - service: switch.turn_off
+    target:
+      entity_id: switch.bedroom_blinds_2_2
+  - delay:
+      milliseconds: "{{ states('input_number.bedroom_blinds_2_delay') | int }}"
+  - service: shell_command.bedroom_stop_blinds_2
+  mode: single
+#Открыть жалюзи 3
+bedroom_open_blinds_3:
+  alias: bedroom_open_blinds_3
+  sequence:
+  - service: switch.turn_off
+    target:
+      entity_id: switch.bedroom_blinds_3
+  - delay:
+      milliseconds: "{{ states('input_number.bedroom_blinds_3_delay') | int }}"
+  - service: shell_command.bedroom_stop_blinds_3
+  mode: single
+
+#Калибровка штор
+bedroom_curtain_calibrate:
+  alias: Калибровка штор
+  sequence:
+  - service: mqtt.publish
+    data:
+      topic: zigbee2mqtt/0x00158d000323a196/set
+      payload: "{ 'options': { 'reset_limits': true } }"
+  - service: cover.close_cover
+    entity_id: cover.bedroom_curtain
+  - delay:
+      seconds: 13 
+  - service: cover.open_cover
+    entity_id: cover.bedroom_curtain

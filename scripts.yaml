@@ -41,10 +41,12 @@ bedroom_close_blinds:
   sequence:
   - service: switch.turn_on
     target:
-      entity_id:
-      - switch.bedroom_blinds_2
-      - switch.bedroom_blinds_2_2
-      - switch.bedroom_blinds_3
+      entity_id: >
+        {% if ((as_timestamp(now()) - as_timestamp(states.script.bedroom_open_blinds.last_changed)) > (states('input_number.bedroom_blinds_delay') | int) ) %}
+            switch.bedroom_blinds_2, switch.bedroom_blinds_2_2, switch.bedroom_blinds_3
+        {% else %}
+            script.empty
+        {% endif %} 
   mode: single
   icon: hass:blinds
 bedroom_open_blinds:
